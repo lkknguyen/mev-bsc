@@ -408,7 +408,7 @@ func (tx *Transaction) Size() common.StorageSize {
 func (tx *Transaction) AsTxDetails(s Signer) (TxDetails, error) {
 	msg := TxDetails{
 		Nonce:    tx.inner.nonce(),
-		GasLimit: tx.inner.gas(),
+		Gas:      tx.inner.gas(),
 		GasPrice: new(big.Int).Set(tx.inner.gasPrice()),
 		To:       tx.inner.to(),
 		Amount:   tx.inner.value(),
@@ -675,7 +675,7 @@ type TxDetails struct {
 	From     common.Address  `json:"from"       rlp:"nil"`
 	Nonce    uint64
 	Amount   *big.Int `json:"value"`
-	GasLimit uint64
+	Gas      uint64
 	GasPrice *big.Int
 	Data     []byte `json:"data"`
 	Hash     common.Hash
@@ -700,7 +700,7 @@ func (tx *TxDetails) MarshalJSON() ([]byte, error) {
 		From:     hexutil.Encode(tx.From.Bytes()),
 		Nonce:    hexutil.EncodeUint64(tx.Nonce),
 		Amount:   hexutil.EncodeBig(tx.Amount),
-		GasLimit: hexutil.EncodeUint64(tx.GasLimit),
+		GasLimit: hexutil.EncodeUint64(tx.Gas),
 		GasPrice: hexutil.EncodeBig(tx.GasPrice),
 		Hash:     hexutil.Encode(tx.Hash.Bytes()),
 		Data:     hexutil.Encode(tx.Data),
