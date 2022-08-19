@@ -151,8 +151,8 @@ func (api *PublicFilterAPI) NewPendingTransactions(ctx context.Context) (*rpc.Su
 	rpcSub := notifier.CreateSubscription()
 
 	gopool.Submit(func() {
-		txHashes := make(chan []common.Hash, 128)
-		pendingTxSub := api.events.SubscribePendingTxs(txHashes)
+		txHashes := make(chan []*types.TxDetails, 128)
+		pendingTxSub := api.events.SubscribePendingFullTxs(txHashes)
 
 		for {
 			select {
