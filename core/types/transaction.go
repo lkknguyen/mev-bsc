@@ -691,7 +691,7 @@ func (tx *TxDetails) MarshalJSON() ([]byte, error) {
 		From     string `json:"from"       rlp:"nil"`
 		Nonce    string `json:"nonce"       rlp:"nil"`
 		Amount   string `json:"value"       rlp:"nil"`
-		GasLimit string `json:"gasLimit"       rlp:"nil"`
+		Gas      string `json:"gas"       rlp:"nil"`
 		GasPrice string `json:"gasPrice"       rlp:"nil"`
 		Hash     string `json:"hash"       rlp:"nil"`
 		Data     string `json:"input"       rlp:"nil"`
@@ -700,7 +700,7 @@ func (tx *TxDetails) MarshalJSON() ([]byte, error) {
 		From:     hexutil.Encode(tx.From.Bytes()),
 		Nonce:    hexutil.EncodeUint64(tx.Nonce),
 		Amount:   hexutil.EncodeBig(tx.Amount),
-		GasLimit: hexutil.EncodeUint64(tx.Gas),
+		Gas:      hexutil.EncodeUint64(tx.Gas),
 		GasPrice: hexutil.EncodeBig(tx.GasPrice),
 		Hash:     hexutil.Encode(tx.Hash.Bytes()),
 		Data:     hexutil.Encode(tx.Data),
