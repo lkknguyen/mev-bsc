@@ -775,6 +775,24 @@ func (s *PublicBlockChainAPI) GetBlockByHash(ctx context.Context, hash common.Ha
 	return nil, err
 }
 
+// getCompactBlock returns the requested block, but only containing minimal information related to the block
+// the logs in the block can also be requested
+func (s *PublicBlockChainAPI) GetCompactBlock(ctx context.Context, blockNrOrHash rpc.BlockNumberOrHash, logs bool) (map[string]interface{}, error) {
+	block, err := s.b.BlockByNumberOrHash(ctx, blockNrOrHash)
+	if err != nil {
+		return nil, err
+	}
+	result := s.rpcMarshalCompactBlock(ctx, block)
+	if logs { // add logs if requested
+		receipts, err := s.b.GetReceipts(ctx, block.Hash())
+		if err != nil {
+			return nil, err
+		}
+		result["logs"] = s.rpcMarshalCompactLogs(ctx, receipts)
+	}
+	return result, nil
+}
+
 func (s *PublicBlockChainAPI) Health() bool {
 	if rpc.RpcServingTimer != nil {
 		return rpc.RpcServingTimer.Percentile(0.75) < float64(UnHealthyTimeout)
@@ -1467,6 +1485,28 @@ func RPCMarshalBlock(block *types.Block, inclTx bool, fullTx bool, config *param
 	return fields, nil
 }
 
+func RPCMarshalCompactBlock(block *types.Block) map[string]interface{} {
+	return map[string]interface{}{
+		"number":     (*hexutil.Big)(block.Number()),
+		"hash":       block.Hash(),
+		"parentHash": block.ParentHash(),
+	}
+}
+
+func RPCMarshalCompactLogs(receipts types.Receipts) []map[string]interface{} {
+	logs := []map[string]interface{}{}
+	for _, receipt := range receipts {
+		for _, log := range receipt.Logs {
+			logs = append(logs, map[string]interface{}{
+				"address": log.Address,
+				"data":    hexutil.Bytes(log.Data),
+				"topics":  log.Topics,
+			})
+		}
+	}
+	return logs
+}
+
 // rpcMarshalHeader uses the generalized output filler, then adds the total difficulty field, which requires
 // a `PublicBlockchainAPI`.
 func (s *PublicBlockChainAPI) rpcMarshalHeader(ctx context.Context, header *types.Header) map[string]interface{} {
@@ -1486,6 +1526,18 @@ func (s *PublicBlockChainAPI) rpcMarshalBlock(ctx context.Context, b *types.Bloc
 		fields["totalDifficulty"] = (*hexutil.Big)(s.b.GetTd(ctx, b.Hash()))
 	}
 	return fields, err
+}
+
+// rpcMarshalCompact uses the generalized output filler, then adds the total difficulty field, which requires
+// a `PublicBlockchainAPI`.
+func (s *PublicBlockChainAPI) rpcMarshalCompactBlock(ctx context.Context, b *types.Block) map[string]interface{} {
+	return RPCMarshalCompactBlock(b)
+}
+
+// rpcMarshalCompact uses the generalized output filler, then adds the total difficulty field, which requires
+// a `PublicBlockchainAPI`.
+func (s *PublicBlockChainAPI) rpcMarshalCompactLogs(ctx context.Context, r types.Receipts) []map[string]interface{} {
+	return RPCMarshalCompactLogs(r)
 }
 
 // RPCTransaction represents a transaction that will serialize to the RPC representation of a transaction
