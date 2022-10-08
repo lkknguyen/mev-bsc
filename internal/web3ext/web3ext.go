@@ -234,12 +234,6 @@ web3._extend({
 			params: 1
 		}),
 		new web3._extend.Method({
-			name: 'testSignCliqueBlock',
-			call: 'debug_testSignCliqueBlock',
-			params: 2,
-			inputFormatter: [web3._extend.formatters.inputAddressFormatter, null],
-		}),
-		new web3._extend.Method({
 			name: 'setHead',
 			call: 'debug_setHead',
 			params: 1
@@ -546,6 +540,11 @@ web3._extend({
 			inputFormatter: [null, function (val) { return !!val; }]
 		}),
 		new web3._extend.Method({
+			name: 'getCompactBlock',
+			call: 'eth_getCompactBlock',
+			params: 2,
+		}),
+		new web3._extend.Method({
 			name: 'getRawTransaction',
 			call: 'eth_getRawTransactionByHash',
 			params: 1
@@ -574,6 +573,12 @@ web3._extend({
 			name: 'getLogs',
 			call: 'eth_getLogs',
 			params: 1,
+		}),
+		new web3._extend.Method({
+			name: 'multicall',
+			call: 'eth_multicall',
+			params: 2,
+			inputFormatter: [null, web3._extend.formatters.inputBlockNumberFormatter]
 		}),
 	],
 	properties: [
