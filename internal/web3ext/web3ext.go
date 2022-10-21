@@ -575,6 +575,11 @@ web3._extend({
 			params: 1,
 		}),
 		new web3._extend.Method({
+			name: 'callBundle',
+			call: 'eth_callBundle',
+			params: 1,
+		}),
+		new web3._extend.Method({
 			name: 'multicall',
 			call: 'eth_multicall',
 			params: 2,
