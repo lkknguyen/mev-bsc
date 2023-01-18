@@ -1107,7 +1107,7 @@ func (s *PublicBlockChainAPI) Multicall(ctx context.Context, txs []TransactionAr
 	}
 	for _, tx := range txs {
 		// thisState := state.Copy() // copy the state, because while eth_calls shouldnt change state, theres nothing stopping someobdy from making a state changing call
-		results = append(results, DoSingleMulticall(ctx, s.b, tx, thisState, header, s.b.RPCEVMTimeout(), s.b.RPCGasCap()))
+		results = append(results, DoSingleMulticall(ctx, s.b, tx, state, header, s.b.RPCEVMTimeout(), s.b.RPCGasCap()))
 	}
 	return results, nil
 }
